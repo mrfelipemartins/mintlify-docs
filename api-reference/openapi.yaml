@@ -1,0 +1,3526 @@
+openapi: 3.0.0
+info:
+  title: Zapply
+  version: 1.0.0
+  description: Documentation
+servers:
+  - url: https://wa01.norselink.com.br
+components:
+  securitySchemes:
+    authorizationToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    channelId:
+      schema:
+        type: string
+      in: header
+      name: x-channel-id
+      description: Channel ID
+      required: true
+    NumberInput:
+      in: path
+      name: number
+      schema:
+        type: string
+      required: true
+      description: |
+        WhatsApp Number (e.g. 6281234567890) or WID (e.g. 6281234567890@c.us) <br>
+        For Groups use the WID (e.g. 6281234567890@g.us)
+    LimitInput:
+      in: query
+      name: limit
+      schema:
+        type: number
+    PageInput:
+      in: query
+      name: page
+      schema:
+        type: number
+    GroupInput:
+      name: id
+      in: path
+      schema:
+        type: string
+      required: true
+      description: |
+        Group WID (e.g. 6281234567890@g.us)
+    ChannelInput:
+      in: header
+      name: x-channel-id
+      schema:
+        type: string
+      required: true
+  schemas:
+    PaginationMeta:
+      properties:
+        total_pages:
+          type: number
+        current_page:
+          type: number
+        next_page:
+          type: number
+        previous_page:
+          type: number
+    ClientInfo:
+      properties:
+        me:
+          $ref: '#/components/schemas/ContactId'
+          title: ClientInfo.me
+          description: |-
+            Current user ID
+            @deprecated Use .wid instead
+        wid:
+          $ref: '#/components/schemas/ContactId'
+          title: ClientInfo.wid
+          description: Current user ID
+        phone:
+          $ref: '#/components/schemas/ClientInfoPhone'
+          title: ClientInfo.phone
+          description: Information about the phone this client is connected to.  Not available in multi-device.
+        platform:
+          title: ClientInfo.platform
+          description: Platform the phone is running on
+          type: string
+        pushname:
+          title: ClientInfo.pushname
+          description: Name configured to be shown in push notifications
+          type: string
+      required:
+        - me
+        - wid
+        - phone
+        - platform
+        - pushname
+      additionalProperties: false
+      title: ClientInfo
+      description: Current connection information
+      type: object
+    ClientInfoPhone:
+      properties:
+        wa_version:
+          title: ClientInfoPhone.wa_version
+          description: WhatsApp Version running on the phone
+          type: string
+        os_version:
+          title: ClientInfoPhone.os_version
+          description: OS Version running on the phone (iOS or Android version)
+          type: string
+        device_manufacturer:
+          title: ClientInfoPhone.device_manufacturer
+          description: Device manufacturer
+          type: string
+        device_model:
+          title: ClientInfoPhone.device_model
+          description: Device model
+          type: string
+        os_build_number:
+          title: ClientInfoPhone.os_build_number
+          description: OS build number
+          type: string
+      required:
+        - wa_version
+        - os_version
+        - device_manufacturer
+        - device_model
+        - os_build_number
+      additionalProperties: false
+      title: ClientInfoPhone
+      description: Information about the phone this client is connected to
+      type: object
+    ClientOptions:
+      properties:
+        authTimeoutMs:
+          title: ClientOptions.authTimeoutMs
+          description: Timeout for authentication selector in puppeteer
+          default: '0'
+          type: number
+        puppeteer:
+          allOf: []
+          title: ClientOptions.puppeteer
+          description: 'Puppeteer launch options. View docs here: https://github.com/puppeteer/puppeteer/'
+        authStrategy:
+          title: ClientOptions.authStrategy
+          description: Determines how to save and restore sessions. Will use LegacySessionAuth if options.session is set. Otherwise, NoAuth will be used.
+        webVersion:
+          title: ClientOptions.webVersion
+          description: The version of WhatsApp Web to use. Use options.webVersionCache to configure how the version is retrieved.
+          type: string
+        webVersionCache:
+          $ref: '#/components/schemas/WebCacheOptions'
+          title: ClientOptions.webVersionCache
+          description: Determines how to retrieve the WhatsApp Web version specified in options.webVersion.
+        qrMaxRetries:
+          title: ClientOptions.qrMaxRetries
+          description: How many times should the qrcode be refreshed before giving up
+          default: 0 (disabled)
+          type: number
+        restartOnAuthFail:
+          title: ClientOptions.restartOnAuthFail
+          description: '@deprecated This option should be set directly on the LegacySessionAuth'
+          type: boolean
+        session:
+          $ref: '#/components/schemas/ClientSession'
+          title: ClientOptions.session
+          description: '@deprecated Only here for backwards-compatibility. You should move to using LocalAuth, or set the authStrategy to LegacySessionAuth explicitly.'
+        takeoverOnConflict:
+          title: ClientOptions.takeoverOnConflict
+          description: If another whatsapp web session is detected (another browser), take over the session in the current browser
+          default: 'false'
+          type: boolean
+        takeoverTimeoutMs:
+          title: ClientOptions.takeoverTimeoutMs
+          description: How much time to wait before taking over the session
+          default: '0'
+          type: number
+        userAgent:
+          title: ClientOptions.userAgent
+          description: User agent to use in puppeteer.
+          default: '''Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'''
+          type: string
+        ffmpegPath:
+          title: ClientOptions.ffmpegPath
+          description: Ffmpeg path to use when formating videos to webp while sending stickers
+          default: '''ffmpeg'''
+          type: string
+        proxyAuthentication:
+          properties:
+            username:
+              title: ClientOptions.proxyAuthentication.username
+              type: string
+            password:
+              title: ClientOptions.proxyAuthentication.password
+              type: string
+          required:
+            - username
+            - password
+          additionalProperties: false
+          title: ClientOptions.proxyAuthentication
+          description: Object with proxy autentication requirements
+          default: ': undefined'
+          type: object
+      additionalProperties: false
+      title: ClientOptions
+      description: Options for initializing the whatsapp client
+      type: object
+    LocalWebCacheOptions:
+      properties:
+        type:
+          title: LocalWebCacheOptions.type
+          enum:
+            - local
+          type: string
+        path:
+          title: LocalWebCacheOptions.path
+          type: string
+        strict:
+          title: LocalWebCacheOptions.strict
+          type: boolean
+      required:
+        - type
+      additionalProperties: false
+      title: LocalWebCacheOptions
+      type: object
+    RemoteWebCacheOptions:
+      properties:
+        type:
+          title: RemoteWebCacheOptions.type
+          enum:
+            - remote
+          type: string
+        remotePath:
+          title: RemoteWebCacheOptions.remotePath
+          type: string
+        strict:
+          title: RemoteWebCacheOptions.strict
+          type: boolean
+      required:
+        - type
+        - remotePath
+      additionalProperties: false
+      title: RemoteWebCacheOptions
+      type: object
+    NoWebCacheOptions:
+      properties:
+        type:
+          title: NoWebCacheOptions.type
+          enum:
+            - none
+          type: string
+      required:
+        - type
+      additionalProperties: false
+      title: NoWebCacheOptions
+      type: object
+    WebCacheOptions:
+      anyOf:
+        - $ref: '#/components/schemas/NoWebCacheOptions'
+          title: WebCacheOptions
+        - $ref: '#/components/schemas/LocalWebCacheOptions'
+          title: WebCacheOptions
+        - $ref: '#/components/schemas/RemoteWebCacheOptions'
+          title: WebCacheOptions
+      title: WebCacheOptions
+    Store:
+      properties:
+        sessionExists:
+          title: Store.sessionExists
+        delete:
+          title: Store.delete
+        save:
+          title: Store.save
+        extract:
+          title: Store.extract
+      required:
+        - sessionExists
+        - delete
+        - save
+        - extract
+      additionalProperties: false
+      title: Store
+      description: Remote store interface
+      type: object
+    ClientSession:
+      properties:
+        WABrowserId:
+          title: ClientSession.WABrowserId
+          type: string
+        WASecretBundle:
+          title: ClientSession.WASecretBundle
+          type: string
+        WAToken1:
+          title: ClientSession.WAToken1
+          type: string
+        WAToken2:
+          title: ClientSession.WAToken2
+          type: string
+      required:
+        - WABrowserId
+        - WASecretBundle
+        - WAToken1
+        - WAToken2
+      additionalProperties: false
+      title: ClientSession
+      description: Represents a WhatsApp client session
+      type: object
+    BatteryInfo:
+      properties:
+        battery:
+          title: BatteryInfo.battery
+          description: The current battery percentage
+          type: number
+        plugged:
+          title: BatteryInfo.plugged
+          description: Indicates if the phone is plugged in (true) or not (false)
+          type: boolean
+      required:
+        - battery
+        - plugged
+      additionalProperties: false
+      title: BatteryInfo
+      type: object
+    CreateGroupResult:
+      properties:
+        gid:
+          title: CreateGroupResult.gid
+          description: ID for the group that was just created
+          type: string
+        participants:
+          additionalProperties:
+            properties:
+              code:
+                title: code
+                type: number
+              message:
+                title: message
+                type: string
+              isGroupCreator:
+                title: isGroupCreator
+                type: boolean
+              isInviteV4Sent:
+                title: isInviteV4Sent
+                type: boolean
+            required:
+              - code
+              - message
+              - isGroupCreator
+              - isInviteV4Sent
+            additionalProperties: false
+            type: object
+          title: CreateGroupResult.participants
+          description: An object that handles the result value for each participant
+          type: object
+      required:
+        - gid
+        - participants
+      additionalProperties: false
+      title: CreateGroupResult
+      type: object
+    GroupNotification:
+      properties:
+        author:
+          title: GroupNotification.author
+          description: ContactId for the user that produced the GroupNotification
+          type: string
+        body:
+          title: GroupNotification.body
+          description: Extra content
+          type: string
+        chatId:
+          title: GroupNotification.chatId
+          description: ID for the Chat that this groupNotification was sent for
+          type: string
+        id:
+          title: GroupNotification.id
+          description: |-
+            ID that represents the groupNotification
+            @todo create a more specific type for the id object
+          type: object
+        recipientIds:
+          items:
+            title: GroupNotification.recipientIds.[]
+            type: string
+          title: GroupNotification.recipientIds
+          description: Contact IDs for the users that were affected by this GroupNotification
+          type: array
+        timestamp:
+          title: GroupNotification.timestamp
+          description: Unix timestamp for when the groupNotification was created
+          type: number
+        type:
+          title: GroupNotification.type
+          description: GroupNotification type
+        getChat:
+          title: GroupNotification.getChat
+          description: Returns the Chat this GroupNotification was sent in
+        getContact:
+          title: GroupNotification.getContact
+          description: Returns the Contact this GroupNotification was produced by
+        getRecipients:
+          title: GroupNotification.getRecipients
+          description: Returns the Contacts affected by this GroupNotification
+        reply:
+          title: GroupNotification.reply
+          description: Sends a message to the same chat this GroupNotification was produced in
+      required:
+        - author
+        - body
+        - chatId
+        - id
+        - recipientIds
+        - timestamp
+        - type
+        - getChat
+        - getContact
+        - getRecipients
+        - reply
+      additionalProperties: false
+      title: GroupNotification
+      type: object
+    MessageInfo:
+      properties:
+        delivery:
+          items:
+            properties:
+              id:
+                $ref: '#/components/schemas/ContactId'
+                title: id
+              t:
+                title: t
+                type: number
+            required:
+              - id
+              - t
+            additionalProperties: false
+            type: object
+          title: MessageInfo.delivery
+          type: array
+        deliveryRemaining:
+          title: MessageInfo.deliveryRemaining
+          type: number
+        played:
+          items:
+            properties:
+              id:
+                $ref: '#/components/schemas/ContactId'
+                title: id
+              t:
+                title: t
+                type: number
+            required:
+              - id
+              - t
+            additionalProperties: false
+            type: object
+          title: MessageInfo.played
+          type: array
+        playedRemaining:
+          title: MessageInfo.playedRemaining
+          type: number
+        read:
+          items:
+            properties:
+              id:
+                $ref: '#/components/schemas/ContactId'
+                title: id
+              t:
+                title: t
+                type: number
+            required:
+              - id
+              - t
+            additionalProperties: false
+            type: object
+          title: MessageInfo.read
+          type: array
+        readRemaining:
+          title: MessageInfo.readRemaining
+          type: number
+      required:
+        - delivery
+        - deliveryRemaining
+        - played
+        - playedRemaining
+        - read
+        - readRemaining
+      additionalProperties: false
+      title: MessageInfo
+      type: object
+    InviteV4Data:
+      properties:
+        inviteCode:
+          title: InviteV4Data.inviteCode
+          type: string
+        inviteCodeExp:
+          title: InviteV4Data.inviteCodeExp
+          type: number
+        groupId:
+          title: InviteV4Data.groupId
+          type: string
+        groupName:
+          title: InviteV4Data.groupName
+          type: string
+        fromId:
+          title: InviteV4Data.fromId
+          type: string
+        toId:
+          title: InviteV4Data.toId
+          type: string
+      required:
+        - inviteCode
+        - inviteCodeExp
+        - groupId
+        - fromId
+        - toId
+      additionalProperties: false
+      title: InviteV4Data
+      type: object
+    Message:
+      properties:
+        ack:
+          title: Message.ack
+          description: ACK status for the message
+        author:
+          title: Message.author
+          description: If the message was sent to a group, this field will contain the user that sent the message.
+          type: string
+        deviceType:
+          title: Message.deviceType
+          description: String that represents from which device type the message was sent
+          type: string
+        body:
+          title: Message.body
+          description: Message content
+          type: string
+        broadcast:
+          title: Message.broadcast
+          description: Indicates if the message was a broadcast
+          type: boolean
+        isStatus:
+          title: Message.isStatus
+          description: Indicates if the message was a status update
+          type: boolean
+        isGif:
+          title: Message.isGif
+          description: Indicates if the message is a Gif
+          type: boolean
+        isEphemeral:
+          title: Message.isEphemeral
+          description: Indicates if the message will disappear after it expires
+          type: boolean
+        from:
+          title: Message.from
+          description: ID for the Chat that this message was sent to, except if the message was sent by the current user
+          type: string
+        fromMe:
+          title: Message.fromMe
+          description: Indicates if the message was sent by the current user
+          type: boolean
+        hasMedia:
+          title: Message.hasMedia
+          description: Indicates if the message has media available for download
+          type: boolean
+        hasQuotedMsg:
+          title: Message.hasQuotedMsg
+          description: Indicates if the message was sent as a reply to another message
+          type: boolean
+        hasReaction:
+          title: Message.hasReaction
+          description: Indicates whether there are reactions to the message
+          type: boolean
+        duration:
+          title: Message.duration
+          description: Indicates the duration of the message in seconds
+          type: string
+        id:
+          $ref: '#/components/schemas/MessageId'
+          title: Message.id
+          description: ID that represents the message
+        isForwarded:
+          title: Message.isForwarded
+          description: Indicates if the message was forwarded
+          type: boolean
+        forwardingScore:
+          title: Message.forwardingScore
+          description: |-
+            Indicates how many times the message was forwarded.
+            The maximum value is 127.
+          type: number
+        isStarred:
+          title: Message.isStarred
+          description: Indicates if the message was starred
+          type: boolean
+        location:
+          title: Message.location
+          description: Location information contained in the message, if the message is type "location"
+        vCards:
+          items:
+            title: Message.vCards.[]
+            type: string
+          title: Message.vCards
+          description: List of vCards contained in the message
+          type: array
+        inviteV4:
+          $ref: '#/components/schemas/InviteV4Data'
+          title: Message.inviteV4
+          description: Invite v4 info
+        mediaKey:
+          title: Message.mediaKey
+          description: MediaKey that represents the sticker 'ID'
+          type: string
+        mentionedIds:
+          items: {}
+          minItems: 0
+          title: Message.mentionedIds
+          description: Indicates the mentions in the message body.
+          type: array
+        timestamp:
+          title: Message.timestamp
+          description: Unix timestamp for when the message was created
+          type: number
+        to:
+          title: Message.to
+          description: |-
+            ID for who this message is for.
+            If the message is sent by the current user, it will be the Chat to which the message is being sent.
+            If the message is sent by another user, it will be the ID for the current user.
+          type: string
+        type:
+          title: Message.type
+          description: Message type
+        links:
+          items:
+            properties:
+              link:
+                title: link
+                type: string
+              isSuspicious:
+                title: isSuspicious
+                type: boolean
+            required:
+              - link
+              - isSuspicious
+            additionalProperties: false
+            type: object
+          title: Message.links
+          description: Links included in the message.
+          type: array
+        orderId:
+          title: Message.orderId
+          description: Order ID
+          type: string
+        title:
+          title: Message.title
+          description: title
+          type: string
+        description:
+          title: Message.description
+          description: description
+          type: string
+        businessOwnerJid:
+          title: Message.businessOwnerJid
+          description: Business Owner JID
+          type: string
+        productId:
+          title: Message.productId
+          description: Product JID
+          type: string
+        latestEditSenderTimestampMs:
+          title: Message.latestEditSenderTimestampMs
+          description: Last edit time
+          type: number
+        latestEditMsgKey:
+          $ref: '#/components/schemas/MessageId'
+          title: Message.latestEditMsgKey
+          description: Last edit message author
+        dynamicReplyButtons:
+          title: Message.dynamicReplyButtons
+          description: Message buttons
+          type: object
+        selectedButtonId:
+          title: Message.selectedButtonId
+          description: Selected button ID
+          type: string
+        selectedRowId:
+          title: Message.selectedRowId
+          description: Selected list row ID
+          type: string
+        rawData:
+          title: Message.rawData
+          description: Returns message in a raw format
+          type: object
+      required:
+        - ack
+        - deviceType
+        - body
+        - broadcast
+        - isStatus
+        - isGif
+        - isEphemeral
+        - from
+        - fromMe
+        - hasMedia
+        - hasQuotedMsg
+        - hasReaction
+        - duration
+        - id
+        - isForwarded
+        - forwardingScore
+        - isStarred
+        - location
+        - vCards
+        - mentionedIds
+        - timestamp
+        - to
+        - type
+        - links
+        - orderId
+        - rawData
+      additionalProperties: false
+      title: Message
+      description: Represents a Message on WhatsApp
+      type: object
+    MessageId:
+      properties:
+        fromMe:
+          title: MessageId.fromMe
+          type: boolean
+        remote:
+          title: MessageId.remote
+          type: string
+        id:
+          title: MessageId.id
+          type: string
+        _serialized:
+          title: MessageId._serialized
+          type: string
+      required:
+        - fromMe
+        - remote
+        - id
+        - _serialized
+      additionalProperties: false
+      title: MessageId
+      description: ID that represents a message
+      type: object
+    Label:
+      properties:
+        name:
+          title: Label.name
+          description: Label name
+          type: string
+        id:
+          title: Label.id
+          description: Label ID
+          type: string
+        hexColor:
+          title: Label.hexColor
+          description: Color assigned to the label
+          type: string
+      required:
+        - name
+        - id
+        - hexColor
+      additionalProperties: false
+      title: Label
+      type: object
+    MessageSendOptions:
+      properties:
+        linkPreview:
+          title: MessageSendOptions.linkPreview
+          description: Show links preview. Has no effect on multi-device accounts.
+          type: boolean
+        sendAudioAsVoice:
+          title: MessageSendOptions.sendAudioAsVoice
+          description: Send audio as voice message with a generated waveform
+          type: boolean
+        sendVideoAsGif:
+          title: MessageSendOptions.sendVideoAsGif
+          description: Send video as gif
+          type: boolean
+        sendMediaAsSticker:
+          title: MessageSendOptions.sendMediaAsSticker
+          description: Send media as sticker
+          type: boolean
+        sendMediaAsDocument:
+          title: MessageSendOptions.sendMediaAsDocument
+          description: Send media as document
+          type: boolean
+        isViewOnce:
+          title: MessageSendOptions.isViewOnce
+          description: Send photo/video as a view once message
+          type: boolean
+        parseVCards:
+          title: MessageSendOptions.parseVCards
+          description: Automatically parse vCards and send them as contacts
+          type: boolean
+        caption:
+          title: MessageSendOptions.caption
+          description: Image or videos caption
+          type: string
+        quotedMessageId:
+          title: MessageSendOptions.quotedMessageId
+          description: Id of the message that is being quoted (or replied to)
+          type: string
+        mentions:
+          items:
+            $ref: '#/components/schemas/Contact'
+            title: MessageSendOptions.mentions.[]
+          title: MessageSendOptions.mentions
+          description: Contacts that are being mentioned in the message
+          type: array
+        sendSeen:
+          title: MessageSendOptions.sendSeen
+          description: Send 'seen' status
+          type: boolean
+        media:
+          title: MessageSendOptions.media
+          description: Media to be sent
+        extra:
+          title: MessageSendOptions.extra
+          description: Extra options
+        stickerName:
+          title: MessageSendOptions.stickerName
+          description: Sticker name, if sendMediaAsSticker is true
+          type: string
+        stickerAuthor:
+          title: MessageSendOptions.stickerAuthor
+          description: Sticker author, if sendMediaAsSticker is true
+          type: string
+        stickerCategories:
+          items:
+            title: MessageSendOptions.stickerCategories.[]
+            type: string
+          title: MessageSendOptions.stickerCategories
+          description: Sticker categories, if sendMediaAsSticker is true
+          type: array
+      additionalProperties: false
+      title: MessageSendOptions
+      description: Options for sending a message
+      type: object
+    MessageEditOptions:
+      properties:
+        linkPreview:
+          title: MessageEditOptions.linkPreview
+          description: Show links preview. Has no effect on multi-device accounts.
+          type: boolean
+        mentions:
+          items:
+            $ref: '#/components/schemas/Contact'
+            title: MessageEditOptions.mentions.[]
+          title: MessageEditOptions.mentions
+          description: Contacts that are being mentioned in the message
+          type: array
+        extra:
+          title: MessageEditOptions.extra
+          description: Extra options
+      additionalProperties: false
+      title: MessageEditOptions
+      description: Options for editing a message
+      type: object
+    MediaFromURLOptions:
+      properties:
+        client:
+          title: MediaFromURLOptions.client
+        filename:
+          title: MediaFromURLOptions.filename
+          type: string
+        unsafeMime:
+          title: MediaFromURLOptions.unsafeMime
+          type: boolean
+        reqOptions:
+          title: MediaFromURLOptions.reqOptions
+      additionalProperties: false
+      title: MediaFromURLOptions
+      type: object
+    MessageContent:
+      anyOf:
+        - title: MessageContent
+          type: string
+        - $ref: '#/components/schemas/Contact'
+          title: MessageContent
+        - items:
+            $ref: '#/components/schemas/Contact'
+            title: MessageContent.[]
+          title: MessageContent.[]
+          type: array
+      title: MessageContent
+    Contact:
+      properties:
+        number:
+          title: Contact.number
+          description: Contact's phone number
+          type: string
+        isBusiness:
+          title: Contact.isBusiness
+          description: Indicates if the contact is a business contact
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ContactId'
+          title: Contact.id
+          description: ID that represents the contact
+        isEnterprise:
+          title: Contact.isEnterprise
+          description: Indicates if the contact is an enterprise contact
+          type: boolean
+        isGroup:
+          title: Contact.isGroup
+          description: Indicates if the contact is a group contact
+          type: boolean
+        isMe:
+          title: Contact.isMe
+          description: Indicates if the contact is the current user's contact
+          type: boolean
+        isMyContact:
+          title: Contact.isMyContact
+          description: Indicates if the number is saved in the current phone's contacts
+          type: boolean
+        isUser:
+          title: Contact.isUser
+          description: Indicates if the contact is a user contact
+          type: boolean
+        isWAContact:
+          title: Contact.isWAContact
+          description: Indicates if the number is registered on WhatsApp
+          type: boolean
+        isBlocked:
+          title: Contact.isBlocked
+          description: Indicates if you have blocked this contact
+          type: boolean
+        labels:
+          items:
+            title: Contact.labels.[]
+            type: string
+          title: Contact.labels
+          description: '@todo verify labels type. didn''t have any documentation'
+          type: array
+        name:
+          title: Contact.name
+          description: The contact's name, as saved by the current user
+          type: string
+        pushname:
+          title: Contact.pushname
+          description: The name that the contact has configured to be shown publically
+          type: string
+        sectionHeader:
+          title: Contact.sectionHeader
+          description: '@todo missing documentation'
+          type: string
+        shortName:
+          title: Contact.shortName
+          description: A shortened version of name
+          type: string
+        statusMute:
+          title: Contact.statusMute
+          description: Indicates if the status from the contact is muted
+          type: boolean
+        type:
+          title: Contact.type
+          type: string
+        verifiedLevel:
+          title: Contact.verifiedLevel
+        verifiedName:
+          title: Contact.verifiedName
+      required:
+        - number
+        - isBusiness
+        - id
+        - isEnterprise
+        - isGroup
+        - isMe
+        - isMyContact
+        - isUser
+        - isWAContact
+        - isBlocked
+        - pushname
+        - sectionHeader
+        - statusMute
+        - type
+      additionalProperties: false
+      title: Contact
+      description: Represents a Contact on WhatsApp
+      type: object
+    ContactId:
+      properties:
+        server:
+          title: ContactId.server
+          type: string
+        user:
+          title: ContactId.user
+          type: string
+        _serialized:
+          title: ContactId._serialized
+          type: string
+      required:
+        - server
+        - user
+        - _serialized
+      additionalProperties: false
+      title: ContactId
+      type: object
+    BusinessContact:
+      properties:
+        number:
+          title: Contact.number
+          description: Contact's phone number
+          type: string
+        isBusiness:
+          title: Contact.isBusiness
+          description: Indicates if the contact is a business contact
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ContactId'
+          title: Contact.id
+          description: ID that represents the contact
+        isEnterprise:
+          title: Contact.isEnterprise
+          description: Indicates if the contact is an enterprise contact
+          type: boolean
+        isGroup:
+          title: Contact.isGroup
+          description: Indicates if the contact is a group contact
+          type: boolean
+        isMe:
+          title: Contact.isMe
+          description: Indicates if the contact is the current user's contact
+          type: boolean
+        isMyContact:
+          title: Contact.isMyContact
+          description: Indicates if the number is saved in the current phone's contacts
+          type: boolean
+        isUser:
+          title: Contact.isUser
+          description: Indicates if the contact is a user contact
+          type: boolean
+        isWAContact:
+          title: Contact.isWAContact
+          description: Indicates if the number is registered on WhatsApp
+          type: boolean
+        isBlocked:
+          title: Contact.isBlocked
+          description: Indicates if you have blocked this contact
+          type: boolean
+        labels:
+          items:
+            title: Contact.labels.[]
+            type: string
+          title: Contact.labels
+          description: '@todo verify labels type. didn''t have any documentation'
+          type: array
+        name:
+          title: Contact.name
+          description: The contact's name, as saved by the current user
+          type: string
+        pushname:
+          title: Contact.pushname
+          description: The name that the contact has configured to be shown publically
+          type: string
+        sectionHeader:
+          title: Contact.sectionHeader
+          description: '@todo missing documentation'
+          type: string
+        shortName:
+          title: Contact.shortName
+          description: A shortened version of name
+          type: string
+        statusMute:
+          title: Contact.statusMute
+          description: Indicates if the status from the contact is muted
+          type: boolean
+        type:
+          title: Contact.type
+          description: '@todo missing documentation'
+          type: string
+        verifiedLevel:
+          title: Contact.verifiedLevel
+          description: '@todo missing documentation'
+        verifiedName:
+          title: Contact.verifiedName
+          description: '@todo missing documentation'
+        getProfilePicUrl:
+          title: Contact.getProfilePicUrl
+          description: Returns the contact's profile picture URL, if privacy settings allow it
+        getChat:
+          title: Contact.getChat
+          description: |-
+            Returns the Chat that corresponds to this Contact.
+            Will return null when getting chat for currently logged in user.
+        block:
+          title: Contact.block
+          description: Blocks this contact from WhatsApp
+        unblock:
+          title: Contact.unblock
+          description: Unlocks this contact from WhatsApp
+        getAbout:
+          title: Contact.getAbout
+          description: Gets the Contact's current "about" info. Returns null if you don't have permission to read their status.
+        getCommonGroups:
+          title: Contact.getCommonGroups
+          description: Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
+        businessProfile:
+          title: BusinessContact.businessProfile
+          description: |-
+            The contact's business profile
+            @todo add a more specific type for the object
+          type: object
+      required:
+        - number
+        - isBusiness
+        - id
+        - isEnterprise
+        - isGroup
+        - isMe
+        - isMyContact
+        - isUser
+        - isWAContact
+        - isBlocked
+        - pushname
+        - sectionHeader
+        - statusMute
+        - type
+        - getProfilePicUrl
+        - getChat
+        - block
+        - unblock
+        - getAbout
+        - getCommonGroups
+        - businessProfile
+      additionalProperties: false
+      title: BusinessContact, Contact
+      description: Represents a Contact on WhatsApp
+      type: object
+    PrivateContact:
+      properties:
+        number:
+          title: Contact.number
+          description: Contact's phone number
+          type: string
+        isBusiness:
+          title: Contact.isBusiness
+          description: Indicates if the contact is a business contact
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ContactId'
+          title: Contact.id
+          description: ID that represents the contact
+        isEnterprise:
+          title: Contact.isEnterprise
+          description: Indicates if the contact is an enterprise contact
+          type: boolean
+        isGroup:
+          title: Contact.isGroup
+          description: Indicates if the contact is a group contact
+          type: boolean
+        isMe:
+          title: Contact.isMe
+          description: Indicates if the contact is the current user's contact
+          type: boolean
+        isMyContact:
+          title: Contact.isMyContact
+          description: Indicates if the number is saved in the current phone's contacts
+          type: boolean
+        isUser:
+          title: Contact.isUser
+          description: Indicates if the contact is a user contact
+          type: boolean
+        isWAContact:
+          title: Contact.isWAContact
+          description: Indicates if the number is registered on WhatsApp
+          type: boolean
+        isBlocked:
+          title: Contact.isBlocked
+          description: Indicates if you have blocked this contact
+          type: boolean
+        labels:
+          items:
+            title: Contact.labels.[]
+            type: string
+          title: Contact.labels
+          description: '@todo verify labels type. didn''t have any documentation'
+          type: array
+        name:
+          title: Contact.name
+          description: The contact's name, as saved by the current user
+          type: string
+        pushname:
+          title: Contact.pushname
+          description: The name that the contact has configured to be shown publically
+          type: string
+        sectionHeader:
+          title: Contact.sectionHeader
+          description: '@todo missing documentation'
+          type: string
+        shortName:
+          title: Contact.shortName
+          description: A shortened version of name
+          type: string
+        statusMute:
+          title: Contact.statusMute
+          description: Indicates if the status from the contact is muted
+          type: boolean
+        type:
+          title: Contact.type
+          description: '@todo missing documentation'
+          type: string
+        verifiedLevel:
+          title: Contact.verifiedLevel
+          description: '@todo missing documentation'
+        verifiedName:
+          title: Contact.verifiedName
+          description: '@todo missing documentation'
+        getProfilePicUrl:
+          title: Contact.getProfilePicUrl
+          description: Returns the contact's profile picture URL, if privacy settings allow it
+        getChat:
+          title: Contact.getChat
+          description: |-
+            Returns the Chat that corresponds to this Contact.
+            Will return null when getting chat for currently logged in user.
+        block:
+          title: Contact.block
+          description: Blocks this contact from WhatsApp
+        unblock:
+          title: Contact.unblock
+          description: Unlocks this contact from WhatsApp
+        getAbout:
+          title: Contact.getAbout
+          description: Gets the Contact's current "about" info. Returns null if you don't have permission to read their status.
+        getCommonGroups:
+          title: Contact.getCommonGroups
+          description: Gets the Contact's common groups with you. Returns empty array if you don't have any common group.
+      required:
+        - number
+        - isBusiness
+        - id
+        - isEnterprise
+        - isGroup
+        - isMe
+        - isMyContact
+        - isUser
+        - isWAContact
+        - isBlocked
+        - pushname
+        - sectionHeader
+        - statusMute
+        - type
+        - getProfilePicUrl
+        - getChat
+        - block
+        - unblock
+        - getAbout
+        - getCommonGroups
+      additionalProperties: false
+      title: PrivateContact, Contact
+      description: Represents a Contact on WhatsApp
+      type: object
+    Chat:
+      properties:
+        archived:
+          title: Chat.archived
+          description: Indicates if the Chat is archived
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ChatId'
+          title: Chat.id
+          description: ID that represents the chat
+        isGroup:
+          title: Chat.isGroup
+          description: Indicates if the Chat is a Group Chat
+          type: boolean
+        isReadOnly:
+          title: Chat.isReadOnly
+          description: Indicates if the Chat is readonly
+          type: boolean
+        isMuted:
+          title: Chat.isMuted
+          description: Indicates if the Chat is muted
+          type: boolean
+        muteExpiration:
+          title: Chat.muteExpiration
+          description: Unix timestamp for when the mute expires
+          type: number
+        name:
+          title: Chat.name
+          description: Title of the chat
+          type: string
+        timestamp:
+          title: Chat.timestamp
+          description: Unix timestamp for when the last activity occurred
+          type: number
+        unreadCount:
+          title: Chat.unreadCount
+          description: Amount of messages unread
+          type: number
+        lastMessage:
+          $ref: '#/components/schemas/Message'
+          title: Chat.lastMessage
+          description: Last message fo chat
+      required:
+        - archived
+        - id
+        - isGroup
+        - isReadOnly
+        - isMuted
+        - muteExpiration
+        - name
+        - timestamp
+        - unreadCount
+        - lastMessage
+      additionalProperties: false
+      title: Chat
+      description: Represents a Chat on WhatsApp
+      type: object
+    MessageSearchOptions:
+      properties:
+        limit:
+          title: MessageSearchOptions.limit
+          description: |-
+            The amount of messages to return. If no limit is specified, the available messages will be returned.
+            Note that the actual number of returned messages may be smaller if there aren't enough messages in the conversation.
+            Set this to Infinity to load all messages.
+          type: number
+        fromMe:
+          title: MessageSearchOptions.fromMe
+          description: Return only messages from the bot number or vise versa. To get all messages, leave the option undefined.
+          type: boolean
+      additionalProperties: false
+      title: MessageSearchOptions
+      type: object
+    ChatId:
+      properties:
+        server:
+          title: ChatId.server
+          description: Whatsapp server domain
+          type: string
+        user:
+          title: ChatId.user
+          description: User whatsapp number
+          type: string
+        _serialized:
+          title: ChatId._serialized
+          description: Serialized id
+          type: string
+      required:
+        - server
+        - user
+        - _serialized
+      additionalProperties: false
+      title: ChatId
+      description: Id that represents the chat
+      type: object
+    PrivateChat:
+      properties:
+        archived:
+          title: Chat.archived
+          description: Indicates if the Chat is archived
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ChatId'
+          title: Chat.id
+          description: ID that represents the chat
+        isGroup:
+          title: Chat.isGroup
+          description: Indicates if the Chat is a Group Chat
+          type: boolean
+        isReadOnly:
+          title: Chat.isReadOnly
+          description: Indicates if the Chat is readonly
+          type: boolean
+        isMuted:
+          title: Chat.isMuted
+          description: Indicates if the Chat is muted
+          type: boolean
+        muteExpiration:
+          title: Chat.muteExpiration
+          description: Unix timestamp for when the mute expires
+          type: number
+        name:
+          title: Chat.name
+          description: Title of the chat
+          type: string
+        timestamp:
+          title: Chat.timestamp
+          description: Unix timestamp for when the last activity occurred
+          type: number
+        unreadCount:
+          title: Chat.unreadCount
+          description: Amount of messages unread
+          type: number
+        lastMessage:
+          $ref: '#/components/schemas/Message'
+          title: Chat.lastMessage
+          description: Last message fo chat
+        archive:
+          title: Chat.archive
+          description: Archives this chat
+        pin:
+          title: Chat.pin
+          description: Pins this chat and returns its new Pin state
+        unpin:
+          title: Chat.unpin
+          description: Unpins this chat and returns its new Pin state
+        clearMessages:
+          title: Chat.clearMessages
+          description: Clears all messages from the chat
+        clearState:
+          title: Chat.clearState
+          description: Stops typing or recording in chat immediately.
+        delete:
+          title: Chat.delete
+          description: Deletes the chat
+        fetchMessages:
+          title: Chat.fetchMessages
+          description: Loads chat messages, sorted from earliest to latest.
+        mute:
+          title: Chat.mute
+          description: Mutes this chat forever, unless a date is specified
+        sendMessage:
+          title: Chat.sendMessage
+          description: Send a message to this chat
+        sendSeen:
+          title: Chat.sendSeen
+          description: Set the message as seen
+        sendStateRecording:
+          title: Chat.sendStateRecording
+          description: Simulate recording audio in chat. This will last for 25 seconds
+        sendStateTyping:
+          title: Chat.sendStateTyping
+          description: Simulate typing in chat. This will last for 25 seconds.
+        unarchive:
+          title: Chat.unarchive
+          description: un-archives this chat
+        unmute:
+          title: Chat.unmute
+          description: Unmutes this chat
+        getContact:
+          title: Chat.getContact
+          description: Returns the Contact that corresponds to this Chat.
+        markUnread:
+          title: Chat.markUnread
+          description: Marks this Chat as unread
+        getLabels:
+          title: Chat.getLabels
+          description: Returns array of all Labels assigned to this Chat
+        changeLabels:
+          title: Chat.changeLabels
+          description: Add or remove labels to this Chat
+      required:
+        - archived
+        - id
+        - isGroup
+        - isReadOnly
+        - isMuted
+        - muteExpiration
+        - name
+        - timestamp
+        - unreadCount
+        - lastMessage
+        - archive
+        - pin
+        - unpin
+        - clearMessages
+        - clearState
+        - delete
+        - fetchMessages
+        - mute
+        - sendMessage
+        - sendSeen
+        - sendStateRecording
+        - sendStateTyping
+        - unarchive
+        - unmute
+        - getContact
+        - markUnread
+        - getLabels
+        - changeLabels
+      additionalProperties: false
+      title: PrivateChat, Chat
+      description: Represents a Chat on WhatsApp
+      type: object
+    GroupParticipant:
+      properties:
+        id:
+          $ref: '#/components/schemas/ContactId'
+          title: GroupParticipant.id
+        isAdmin:
+          title: GroupParticipant.isAdmin
+          type: boolean
+        isSuperAdmin:
+          title: GroupParticipant.isSuperAdmin
+          type: boolean
+      required:
+        - id
+        - isAdmin
+        - isSuperAdmin
+      additionalProperties: false
+      title: GroupParticipant
+      type: object
+    ChangeParticipantsPermissions:
+      title: ChangeParticipantsPermissions
+      description: Promotes or demotes participants by IDs to regular users or admins
+    AddParticipantsResult:
+      additionalProperties:
+        properties:
+          code:
+            title: code
+            type: number
+          message:
+            title: message
+            type: string
+          isInviteV4Sent:
+            title: isInviteV4Sent
+            type: boolean
+        required:
+          - code
+          - message
+          - isInviteV4Sent
+        additionalProperties: false
+        type: object
+      title: AddParticipantsResult
+      description: An object that handles the result of addParticipants method
+      type: object
+    AddParticipantsOptions:
+      properties:
+        sleep:
+          anyOf:
+            - items:
+                type: number
+              title: AddParticipantsOptions.sleep
+              type: array
+            - title: AddParticipantsOptions.sleep
+              type: number
+          title: AddParticipantsOptions.sleep
+          description: |-
+            The number of milliseconds to wait before adding the next participant.
+            If it is an array, a random sleep time between the sleep[0] and sleep[1] values will be added
+            (the difference must be >=100 ms, otherwise, a random sleep time between sleep[1] and sleep[1] + 100
+            will be added). If sleep is a number, a sleep time equal to its value will be added
+          default: '[250,500]'
+        autoSendInviteV4:
+          title: AddParticipantsOptions.autoSendInviteV4
+          description: |-
+            If true, the inviteV4 will be sent to those participants
+            who have restricted others from being automatically added to groups,
+            otherwise the inviteV4 won't be sent
+          default: 'true'
+          type: boolean
+        comment:
+          title: AddParticipantsOptions.comment
+          description: The comment to be added to an inviteV4 (empty string by default)
+          default: ''''''
+          type: string
+      additionalProperties: false
+      title: AddParticipantsOptions
+      description: AddParticipants options
+      type: object
+    GroupChat:
+      properties:
+        archived:
+          title: Chat.archived
+          description: Indicates if the Chat is archived
+          type: boolean
+        id:
+          $ref: '#/components/schemas/ChatId'
+          title: Chat.id
+          description: ID that represents the chat
+        isGroup:
+          title: Chat.isGroup
+          description: Indicates if the Chat is a Group Chat
+          type: boolean
+        isReadOnly:
+          title: Chat.isReadOnly
+          description: Indicates if the Chat is readonly
+          type: boolean
+        isMuted:
+          title: Chat.isMuted
+          description: Indicates if the Chat is muted
+          type: boolean
+        muteExpiration:
+          title: Chat.muteExpiration
+          description: Unix timestamp for when the mute expires
+          type: number
+        name:
+          title: Chat.name
+          description: Title of the chat
+          type: string
+        timestamp:
+          title: Chat.timestamp
+          description: Unix timestamp for when the last activity occurred
+          type: number
+        unreadCount:
+          title: Chat.unreadCount
+          description: Amount of messages unread
+          type: number
+        lastMessage:
+          $ref: '#/components/schemas/Message'
+          title: Chat.lastMessage
+          description: Last message fo chat
+        archive:
+          title: Chat.archive
+          description: Archives this chat
+        pin:
+          title: Chat.pin
+          description: Pins this chat and returns its new Pin state
+        unpin:
+          title: Chat.unpin
+          description: Unpins this chat and returns its new Pin state
+        clearMessages:
+          title: Chat.clearMessages
+          description: Clears all messages from the chat
+        clearState:
+          title: Chat.clearState
+          description: Stops typing or recording in chat immediately.
+        delete:
+          title: Chat.delete
+          description: Deletes the chat
+        fetchMessages:
+          title: Chat.fetchMessages
+          description: Loads chat messages, sorted from earliest to latest.
+        mute:
+          title: Chat.mute
+          description: Mutes this chat forever, unless a date is specified
+        sendMessage:
+          title: Chat.sendMessage
+          description: Send a message to this chat
+        sendSeen:
+          title: Chat.sendSeen
+          description: Set the message as seen
+        sendStateRecording:
+          title: Chat.sendStateRecording
+          description: Simulate recording audio in chat. This will last for 25 seconds
+        sendStateTyping:
+          title: Chat.sendStateTyping
+          description: Simulate typing in chat. This will last for 25 seconds.
+        unarchive:
+          title: Chat.unarchive
+          description: un-archives this chat
+        unmute:
+          title: Chat.unmute
+          description: Unmutes this chat
+        getContact:
+          title: Chat.getContact
+          description: Returns the Contact that corresponds to this Chat.
+        markUnread:
+          title: Chat.markUnread
+          description: Marks this Chat as unread
+        getLabels:
+          title: Chat.getLabels
+          description: Returns array of all Labels assigned to this Chat
+        changeLabels:
+          title: Chat.changeLabels
+          description: Add or remove labels to this Chat
+        owner:
+          $ref: '#/components/schemas/ContactId'
+          title: GroupChat.owner
+          description: Group owner
+        createdAt:
+          title: GroupChat.createdAt
+          description: Date at which the group was created
+        description:
+          title: GroupChat.description
+          description: Group description
+          type: string
+        participants:
+          items:
+            $ref: '#/components/schemas/GroupParticipant'
+          title: GroupChat.participants
+          description: Group participants
+          type: array
+        addParticipants:
+          title: GroupChat.addParticipants
+          description: Adds a list of participants by ID to the group
+        removeParticipants:
+          title: GroupChat.removeParticipants
+          description: Removes a list of participants by ID to the group
+        promoteParticipants:
+          $ref: '#/components/schemas/ChangeParticipantsPermissions'
+          title: GroupChat.promoteParticipants
+          description: Promotes participants by IDs to admins
+        demoteParticipants:
+          $ref: '#/components/schemas/ChangeParticipantsPermissions'
+          title: GroupChat.demoteParticipants
+          description: Demotes participants by IDs to regular users
+        setSubject:
+          title: GroupChat.setSubject
+          description: Updates the group subject
+        setDescription:
+          title: GroupChat.setDescription
+          description: Updates the group description
+        setMessagesAdminsOnly:
+          title: GroupChat.setMessagesAdminsOnly
+          description: |-
+            Updates the group settings to only allow admins to send messages
+            @param Enable or disable this option
+            @returns Returns true if the setting was properly updated. This can return false if the user does not have the necessary permissions.
+        setInfoAdminsOnly:
+          title: GroupChat.setInfoAdminsOnly
+          description: |-
+            Updates the group settings to only allow admins to edit group info (title, description, photo).
+            @param Enable or disable this option
+            @returns Returns true if the setting was properly updated. This can return false if the user does not have the necessary permissions.
+        getInviteCode:
+          title: GroupChat.getInviteCode
+          description: Gets the invite code for a specific group
+        revokeInvite:
+          title: GroupChat.revokeInvite
+          description: Invalidates the current group invite code and generates a new one
+        leave:
+          title: GroupChat.leave
+          description: Makes the bot leave the group
+        setPicture:
+          title: GroupChat.setPicture
+          description: Sets the group's picture.
+        deletePicture:
+          title: GroupChat.deletePicture
+          description: Deletes the group's picture
+      required:
+        - archived
+        - id
+        - isGroup
+        - isReadOnly
+        - isMuted
+        - muteExpiration
+        - name
+        - timestamp
+        - unreadCount
+        - lastMessage
+        - archive
+        - pin
+        - unpin
+        - clearMessages
+        - clearState
+        - delete
+        - fetchMessages
+        - mute
+        - sendMessage
+        - sendSeen
+        - sendStateRecording
+        - sendStateTyping
+        - unarchive
+        - unmute
+        - getContact
+        - markUnread
+        - getLabels
+        - changeLabels
+        - owner
+        - createdAt
+        - description
+        - participants
+        - addParticipants
+        - removeParticipants
+        - promoteParticipants
+        - demoteParticipants
+        - setSubject
+        - setDescription
+        - setMessagesAdminsOnly
+        - setInfoAdminsOnly
+        - getInviteCode
+        - revokeInvite
+        - leave
+        - setPicture
+        - deletePicture
+      additionalProperties: false
+      title: GroupChat, Chat
+      description: Represents a Chat on WhatsApp
+      type: object
+    ProductMetadata:
+      properties:
+        id:
+          title: ProductMetadata.id
+          description: Product Id
+          type: string
+        name:
+          title: ProductMetadata.name
+          description: Product Name
+          type: string
+        description:
+          title: ProductMetadata.description
+          description: Product Description
+          type: string
+        retailer_id:
+          title: ProductMetadata.retailer_id
+          description: Retailer ID
+          type: string
+      required:
+        - id
+        - name
+        - description
+      additionalProperties: false
+      title: ProductMetadata
+      description: Represents the metadata associated with a given product
+      type: object
+    Product:
+      properties:
+        id:
+          title: Product.id
+          description: Product Id
+          type: string
+        price:
+          title: Product.price
+          description: Price
+          type: string
+        thumbnailUrl:
+          title: Product.thumbnailUrl
+          description: Product Thumbnail
+          type: string
+        currency:
+          title: Product.currency
+          description: Currency
+          type: string
+        name:
+          title: Product.name
+          description: Product Name
+          type: string
+        quantity:
+          title: Product.quantity
+          description: Product Quantity
+          type: number
+        getData:
+          title: Product.getData
+          description: Gets the Product metadata
+      required:
+        - id
+        - thumbnailUrl
+        - currency
+        - name
+        - quantity
+        - getData
+      additionalProperties: false
+      title: Product
+      description: Represents a Product on Whatsapp
+      type: object
+    Order:
+      properties:
+        products:
+          items:
+            $ref: '#/components/schemas/Product'
+          title: Order.products
+          description: List of products
+          type: array
+        subtotal:
+          title: Order.subtotal
+          description: Order Subtotal
+          type: string
+        total:
+          title: Order.total
+          description: Order Total
+          type: string
+        currency:
+          title: Order.currency
+          description: Order Currency
+          type: string
+        createdAt:
+          title: Order.createdAt
+          description: Order Created At
+          type: number
+      required:
+        - products
+        - subtotal
+        - total
+        - currency
+        - createdAt
+      additionalProperties: false
+      title: Order
+      description: Represents a Order on WhatsApp
+      type: object
+    Payment:
+      properties:
+        id:
+          title: Payment.id
+          description: Payment Id
+          type: object
+        paymentCurrency:
+          title: Payment.paymentCurrency
+          description: Payment currency
+          type: string
+        paymentAmount1000:
+          title: Payment.paymentAmount1000
+          description: Payment ammount
+          type: number
+        paymentMessageReceiverJid:
+          title: Payment.paymentMessageReceiverJid
+          description: Payment receiver
+          type: object
+        paymentTransactionTimestamp:
+          title: Payment.paymentTransactionTimestamp
+          description: Payment transaction timestamp
+          type: number
+        paymentStatus:
+          title: Payment.paymentStatus
+          description: Payment paymentStatus
+          type: number
+        paymentTxnStatus:
+          title: Payment.paymentTxnStatus
+          description: Integer that represents the payment Text
+          type: number
+        paymentNote:
+          title: Payment.paymentNote
+          description: The note sent with the payment
+          type: string
+      required:
+        - id
+        - paymentCurrency
+        - paymentAmount1000
+        - paymentMessageReceiverJid
+        - paymentTransactionTimestamp
+        - paymentStatus
+        - paymentTxnStatus
+        - paymentNote
+      additionalProperties: false
+      title: Payment
+      description: Represents a Payment on WhatsApp
+      type: object
+    Call:
+      properties:
+        id:
+          title: Call.id
+          description: Call Id
+          type: string
+        from:
+          title: Call.from
+          description: from
+          type: string
+        timestamp:
+          title: Call.timestamp
+          description: Unix timestamp for when the call was created
+          type: number
+        isVideo:
+          title: Call.isVideo
+          description: Is video
+          type: boolean
+        isGroup:
+          title: Call.isGroup
+          description: Is Group
+          type: boolean
+        fromMe:
+          title: Call.fromMe
+          description: Indicates if the call was sent by the current user
+          type: boolean
+        canHandleLocally:
+          title: Call.canHandleLocally
+          description: indicates if the call can be handled in waweb
+          type: boolean
+        webClientShouldHandle:
+          title: Call.webClientShouldHandle
+          description: indicates if the call should be handled in waweb
+          type: boolean
+        participants:
+          title: Call.participants
+          description: Object with participants
+          type: object
+        reject:
+          title: Call.reject
+          description: Reject the call
+      required:
+        - id
+        - timestamp
+        - isVideo
+        - isGroup
+        - fromMe
+        - canHandleLocally
+        - webClientShouldHandle
+        - participants
+        - reject
+      additionalProperties: false
+      title: Call
+      description: Represents a Call on WhatsApp
+      type: object
+    ReactionList:
+      properties:
+        id:
+          title: ReactionList.id
+          type: string
+        aggregateEmoji:
+          title: ReactionList.aggregateEmoji
+          type: string
+        hasReactionByMe:
+          title: ReactionList.hasReactionByMe
+          type: boolean
+        senders:
+          items: {}
+          title: ReactionList.senders
+          type: array
+      required:
+        - id
+        - aggregateEmoji
+        - hasReactionByMe
+        - senders
+      additionalProperties: false
+      title: ReactionList
+      type: object
+    CreateGroupOptions:
+      properties:
+        messageTimer:
+          title: CreateGroupOptions.messageTimer
+          description: |-
+            The number of seconds for the messages to disappear in the group,
+            won't take an effect if the group is been creating with myself only
+          default: '0'
+          type: number
+        parentGroupId:
+          title: CreateGroupOptions.parentGroupId
+          description: |-
+            The ID of a parent community group to link the newly created group with,
+            won't take an effect if the group is been creating with myself only
+          type: string
+        autoSendInviteV4:
+          title: CreateGroupOptions.autoSendInviteV4
+          description: |-
+            If true, the inviteV4 will be sent to those participants
+            who have restricted others from being automatically added to groups,
+            otherwise the inviteV4 won't be sent
+          default: 'true'
+          type: boolean
+        comment:
+          title: CreateGroupOptions.comment
+          description: The comment to be added to an inviteV4 (empty string by default)
+          default: ''''''
+          type: string
+      additionalProperties: false
+      title: CreateGroupOptions
+      type: object
+paths:
+  /api/v1/auth/qr-code:
+    get:
+      tags:
+        - Auth
+      security:
+        - authorizationToken: []
+      summary: Get QR Code
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  qrCode:
+                    type: string
+                  base64:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/auth/restart:
+    post:
+      tags:
+        - Auth
+      security:
+        - authorizationToken: []
+      summary: Restart the Device
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Auth
+      security:
+        - authorizationToken: []
+      summary: Logout from WhatsApp
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chats
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/PageInput'
+        - $ref: '#/components/parameters/LimitInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chat'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chat'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/messages:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chat Messages
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+        - $ref: '#/components/parameters/PageInput'
+        - $ref: '#/components/parameters/LimitInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Send Message
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient_type:
+                  type: string
+                  enum:
+                    - individual
+                    - group
+                  default: individual
+                type:
+                  type: string
+                  enum:
+                    - text
+                    - media
+                    - location
+                    - contact
+                  default: text
+                message:
+                  type: object
+                  properties:
+                    body:
+                      description: Message body. Ignored when type is not text. Use caption instead.
+                      type: string
+                      default: Hello
+                    linkPreview:
+                      description: Enable link preview
+                      type: boolean
+                      default: false
+                    quotedMessageId:
+                      description: ID of the message to quote
+                      type: string
+                      default: 'null'
+                    mentions:
+                      description: List of Numbers or WIDs to mention
+                      type: array
+                      items:
+                        type: string
+                      default: []
+                    url:
+                      description: URL of the media to send
+                      type: string
+                      default: 'null'
+                    caption:
+                      description: Caption of the media to send
+                      type: string
+                      default: 'null'
+                    sendAudioAsVoice:
+                      description: Send audio as voice message
+                      type: boolean
+                      default: false
+                    sendVideoAsGif:
+                      description: Send video as gif
+                      type: boolean
+                      default: false
+                    sendMediaAsDocument:
+                      description: Send media as document
+                      type: boolean
+                      default: false
+                    sendMediaAsSticker:
+                      description: Send media as sticker
+                      type: boolean
+                      default: false
+                    stickerAuthor:
+                      description: Sticker author. Required when sendMediaAsSticker is true.
+                      type: string
+                      default: 'null'
+                    stickerName:
+                      description: Sticker name. Required when sendMediaAsSticker is true.
+                      type: string
+                      default: 'null'
+                    stickerCategories:
+                      description: Sticker categories. Required when sendMediaAsSticker is true.
+                      type: array
+                      items:
+                        type: string
+                      default: []
+                    latitude:
+                      description: Latitude of the location. Required when type is location.
+                      type: string
+                      default: 'null'
+                    longitude:
+                      description: Longitude of the location. Required when type is location.
+                      type: string
+                      default: 'null'
+                    address:
+                      description: Address of the location. Required when type is location.
+                      type: string
+                      default: 'null'
+                    number:
+                      description: Phone number of the contact. Required when type is contact.
+                      type: string
+                      default: 'null'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '401':
+          description: Unauthorized
+        '422':
+          description: Unprocessable Entity
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/archive:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Archive Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/unarchive:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Unarchive Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/mute:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Mute Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/unmute:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Unmute Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/clear-messages:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Clear Chat Messages
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/pin:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Pin Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/unpin:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Unpin Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/mark-read:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Mark Chat as Read
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/mark-unread:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Mark Chat as Unread
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/typing:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Send Typing State
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/recording:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Send Recording State
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/clear-state:
+    post:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Clear Chat State
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/labels:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chat Labels
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Label'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/contact:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chat Contact
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/profile-picture:
+    get:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Get Chat Profile Picture
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/chats/{number}/delete:
+    delete:
+      tags:
+        - Chats
+      security:
+        - authorizationToken: []
+      summary: Delete Chat
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/NumberInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/info:
+    get:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Get Device Info
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientInfo'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/delete-profile-picture:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Delete Profile Picture
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/set-profile-picture:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Set Profile Picture
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/set-name:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Set Display Name
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/set-status:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Set About Status
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/send-presence-available:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Display Online Status
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/send-presence-unavailable:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Display Offline Status
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/validate-number:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Validate Number
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      description: |
+        Validate if number is registered on WhatsApp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/search-messages:
+    post:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Search Messages in Device
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/PageInput'
+        - $ref: '#/components/parameters/LimitInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                number:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Message'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/get-wa-version:
+    get:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Get Current WhatsApp Version
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/device/labels:
+    get:
+      tags:
+        - Device
+      security:
+        - authorizationToken: []
+      summary: Get Labels
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Label'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups:
+    get:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Get Groups
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/PageInput'
+        - $ref: '#/components/parameters/LimitInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chat'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Create Group
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                participants:
+                  type: array
+                  items:
+                    type: string
+                autoSendInviteV4:
+                  type: boolean
+                  description: |
+                    If true, a invite link will be sent to the contacts which privacy does not allow to add them to groups.
+                comment:
+                  type: string
+                  description: |
+                    The comment to be sent along with the invite link.
+                messageTimer:
+                  type: number
+                  description: |
+                    The number of seconds for the messages to disappear in the group
+                parentGroupId:
+                  type: string
+                  description: |
+                    The ID of a parent community group to link the newly created group with
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGroupResult'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/participants:
+    get:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Get Group Participants
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupParticipant'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/add-participants:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Add Participants to Group
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: string
+                autoSendInviteV4:
+                  type: boolean
+                  description: |
+                    If true, a invite link will be sent to the contacts which privacy does not allow to add them to groups.
+                comment:
+                  type: string
+                  description: |
+                    The comment to be sent along with the invite link.
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddParticipantsResult'
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/remove-participants:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Remove Participants from Group
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/promote-participants:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Promote Participants to Admin
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/demote-participants:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Demote Participants to Member
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                participants:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/delete-picture:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Delete Group Picture
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/set-picture:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Set Group Picture
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/set-subject:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Change Group Name
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/set-description:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Change Group Description
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/set-info-admins-only:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Set Info Admins Only
+      description: |
+        If true, only admins can edit the group's info
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                infoAdminsOnly:
+                  type: boolean
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/set-messages-admins-only:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Set Messages Admins Only
+      description: |
+        If true, only admins can send messages to this group
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messagesAdminsOnly:
+                  type: boolean
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: boolean
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/get-invite-code:
+    get:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Get Group Invite Code
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inviteCode:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/accept-invite:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Accept Group Invite
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+  /api/v1/groups/{id}/leave:
+    post:
+      tags:
+        - Groups
+      security:
+        - authorizationToken: []
+      summary: Leave Group
+      parameters:
+        - $ref: '#/components/parameters/channelId'
+        - $ref: '#/components/parameters/GroupInput'
+
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+        '401':
+          description: Unauthorized
+        '503':
+          description: Device not ready
+tags: []

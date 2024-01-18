@@ -1,0 +1,988 @@
+---
+title: 'Event types'
+description: 'List of supported event types and their payload.'
+---
+
+## `qr`
+
+Event emitted when a new QR Code is received
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+  "event": "qr",
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+  "data": {
+    "qr": "qrcode string"
+  },
+  "timestamp": "1700095512291"
+}
+  ```
+</Accordion>
+
+## `ready`
+
+Event emitted when the device is connected and ready to receive requests
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+  "event": "ready",
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+  "data": {},
+  "timestamp": "1700095512291"
+}
+  ```
+</Accordion>
+
+## `authenticated`
+
+Event emitted when we finish the authentication process
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+  "event": "authenticated",
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+  "data": {},
+  "timestamp": "1700095512291"
+}
+  ```
+</Accordion>
+
+## `auth_failure`
+
+Event emitted when the authentication process fails
+
+<Accordion title="Sample Request Body">
+  ```json
+  {
+  "event": "auth_failure",
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+  "data": {},
+  "timestamp": "1700095512291"
+}
+  ```
+</Accordion>
+
+## `disconnected`
+
+Event emitted when the device is disconnected
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+  "event": "disconnected",
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+  "data": {},
+  "timestamp": "1700095512291"
+}
+  ```
+</Accordion>
+
+## `message`
+
+Event emitted when a new message is received
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+  "data": {
+    "message": {
+      "id": {
+        "id": "3A0EB5F446CFC8EAD0F2",
+        "fromMe": false,
+        "remote": "5521000000000@c.us",
+        "_serialized": "false_5521000000000@c.us_3A0EB5F446CFC8EAD0F2"
+      },
+      "to": "5521000000000@c.us",
+      "ack": 1,
+      "body": "test message",
+      "from": "5521000000000@c.us",
+      "type": "chat",
+      "_data": {
+        "t": 1705525141,
+        "id": {
+          "id": "3A0EB5F446CFC8EAD0F2",
+          "fromMe": false,
+          "remote": "5521000000000@c.us",
+          "_serialized": "false_5521000000000@c.us_3A0EB5F446CFC8EAD0F2"
+        },
+        "to": "5521000000000@c.us",
+        "ack": 1,
+        "body": "test",
+        "from": "5521000000000@c.us",
+        "self": "in",
+        "star": false,
+        "type": "chat",
+        "invis": false,
+        "links": [],
+        "labels": [],
+        "viewed": false,
+        "isAvatar": false,
+        "isNewMsg": true,
+        "recvFresh": true,
+        "bizBotType": null,
+        "notifyName": "John Doe",
+        "hasReaction": false,
+        "isForwarded": false,
+        "kicNotified": false,
+        "parentMsgId": null,
+        "botPluginType": null,
+        "groupMentions": [],
+        "invokedBotWid": null,
+        "stickerSentTs": 0,
+        "botMsgBodyType": null,
+        "isCarouselCard": false,
+        "isFromTemplate": false,
+        "isMdHistoryMsg": false,
+        "pollInvalidated": false,
+        "latestEditMsgKey": null,
+        "mentionedJidList": [],
+        "botPluginSearchUrl": null,
+        "botResponseTargetId": null,
+        "botPluginMaybeParent": false,
+        "lastPlaybackProgress": 0,
+        "isSentCagPollCreation": false,
+        "isVcardOverMmsDocument": false,
+        "lastUpdateFromServerTs": 0,
+        "botPluginReferenceIndex": null,
+        "botPluginSearchProvider": null,
+        "isDynamicReplyButtonsMsg": false,
+        "requiresDirectConnection": null,
+        "productHeaderImageRejected": false,
+        "latestEditSenderTimestampMs": null,
+        "botReelPluginThumbnailCdnUrl": null
+      },
+      "isGif": false,
+      "links": [],
+      "fromMe": false,
+      "vCards": [],
+      "hasMedia": false,
+      "isStatus": false,
+      "isStarred": false,
+      "timestamp": 1705525141,
+      "deviceType": "ios",
+      "hasReaction": false,
+      "isForwarded": false,
+      "hasQuotedMsg": false,
+      "mentionedIds": [],
+      "forwardingScore": 0
+    }
+  },
+  "event": "message",
+  "timestamp": 1705525142147,
+  "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `message_create`
+
+Event emitted when a new message is created from this device
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "message": {
+            "id": {
+                "id": "3EB046AC327B7FA1B433E1",
+                "fromMe": true,
+                "remote": "552100000000@c.us",
+                "_serialized": "true_552100000000@c.us_3EB046AC327B7FA1B433E1"
+            },
+            "to": "552100000000@c.us",
+            "ack": 1,
+            "body": "test",
+            "from": "552100000000@c.us",
+            "type": "chat",
+            "_data": {
+                "t": 1705525142,
+                "id": {
+                    "id": "3EB046AC327B7FA1B433E1",
+                    "fromMe": true,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "true_552100000000@c.us_3EB046AC327B7FA1B433E1"
+                },
+                "to": "552100000000@c.us",
+                "ack": 1,
+                "body": "test",
+                "from": "552100000000@c.us",
+                "self": "in",
+                "star": false,
+                "type": "chat",
+                "invis": false,
+                "links": [],
+                "author": "552100000000@c.us",
+                "labels": [],
+                "viewed": false,
+                "isAvatar": false,
+                "isNewMsg": true,
+                "recvFresh": true,
+                "bizBotType": null,
+                "notifyName": "John Doe",
+                "hasReaction": false,
+                "isForwarded": false,
+                "kicNotified": false,
+                "parentMsgId": null,
+                "botPluginType": null,
+                "groupMentions": [],
+                "invokedBotWid": null,
+                "stickerSentTs": 0,
+                "botMsgBodyType": null,
+                "isCarouselCard": false,
+                "isFromTemplate": false,
+                "isMdHistoryMsg": false,
+                "pollInvalidated": false,
+                "latestEditMsgKey": null,
+                "mentionedJidList": [],
+                "botPluginSearchUrl": null,
+                "botResponseTargetId": null,
+                "botPluginMaybeParent": false,
+                "lastPlaybackProgress": 0,
+                "isSentCagPollCreation": false,
+                "isVcardOverMmsDocument": false,
+                "lastUpdateFromServerTs": 0,
+                "botPluginReferenceIndex": null,
+                "botPluginSearchProvider": null,
+                "isDynamicReplyButtonsMsg": false,
+                "requiresDirectConnection": null,
+                "productHeaderImageRejected": false,
+                "latestEditSenderTimestampMs": null,
+                "botReelPluginThumbnailCdnUrl": null
+            },
+            "isGif": false,
+            "links": [],
+            "author": "552100000000@c.us",
+            "fromMe": true,
+            "vCards": [],
+            "hasMedia": false,
+            "isStatus": false,
+            "isStarred": false,
+            "timestamp": 1705525142,
+            "deviceType": "android",
+            "hasReaction": false,
+            "isForwarded": false,
+            "hasQuotedMsg": false,
+            "mentionedIds": [],
+            "forwardingScore": 0
+        }
+    },
+    "event": "message_create",
+    "timestamp": 1705525143054,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `message_revoke_everyone`
+
+Event emitted when a message is deleted for everyone
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "after": {
+            "id": {
+                "id": "3AD14A1A4267AC5DF714",
+                "fromMe": false,
+                "remote": "552100000000@c.us",
+                "_serialized": "false_552100000000@c.us_3AD14A1A4267AC5DF714"
+            },
+            "to": "552100000000@c.us",
+            "ack": 1,
+            "body": "",
+            "from": "552100000000@c.us",
+            "type": "revoked",
+            "_data": {
+                "t": 1705525141,
+                "id": {
+                    "id": "3AD14A1A4267AC5DF714",
+                    "fromMe": false,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "false_552100000000@c.us_3AD14A1A4267AC5DF714"
+                },
+                "to": "552100000000@c.us",
+                "ack": 1,
+                "from": "552100000000@c.us",
+                "self": "in",
+                "star": false,
+                "type": "revoked",
+                "invis": false,
+                "links": [],
+                "labels": [],
+                "viewed": false,
+                "subtype": "sender",
+                "isAvatar": false,
+                "isNewMsg": true,
+                "errorCode": "NoError",
+                "recvFresh": true,
+                "bizBotType": null,
+                "notifyName": "John Doe",
+                "hasReaction": false,
+                "isForwarded": false,
+                "kicNotified": false,
+                "parentMsgId": null,
+                "revokeSender": "552100000000@c.us",
+                "botPluginType": null,
+                "invokedBotWid": null,
+                "isSendFailure": false,
+                "stickerSentTs": 0,
+                "botMsgBodyType": null,
+                "isCarouselCard": false,
+                "isFromTemplate": false,
+                "isMdHistoryMsg": false,
+                "pollInvalidated": false,
+                "revokeTimestamp": 1705525652,
+                "latestEditMsgKey": null,
+                "botPluginSearchUrl": null,
+                "botResponseTargetId": null,
+                "botPluginMaybeParent": false,
+                "lastPlaybackProgress": 0,
+                "isSentCagPollCreation": false,
+                "isVcardOverMmsDocument": false,
+                "lastUpdateFromServerTs": 0,
+                "botPluginReferenceIndex": null,
+                "botPluginSearchProvider": null,
+                "isDynamicReplyButtonsMsg": false,
+                "requiresDirectConnection": false,
+                "productHeaderImageRejected": false,
+                "latestEditSenderTimestampMs": null,
+                "botReelPluginThumbnailCdnUrl": null
+            },
+            "isGif": false,
+            "links": [],
+            "fromMe": false,
+            "vCards": [],
+            "hasMedia": false,
+            "isStatus": false,
+            "isStarred": false,
+            "timestamp": 1705525141,
+            "deviceType": "ios",
+            "hasReaction": false,
+            "isForwarded": false,
+            "hasQuotedMsg": false,
+            "mentionedIds": [],
+            "forwardingScore": 0
+        },
+        "before": {
+            "id": {
+                "id": "3AD14A1A4267AC5DF714",
+                "fromMe": false,
+                "remote": "552100000000@c.us",
+                "_serialized": "false_552100000000@c.us_3AD14A1A4267AC5DF714"
+            },
+            "to": "552100000000@c.us",
+            "ack": 1,
+            "body": "test",
+            "from": "552100000000@c.us",
+            "type": "chat",
+            "_data": {
+                "t": 1705525141,
+                "id": {
+                    "id": "3AD14A1A4267AC5DF714",
+                    "fromMe": false,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "false_552100000000@c.us_3AD14A1A4267AC5DF714"
+                },
+                "to": "552100000000@c.us",
+                "ack": 1,
+                "body": "test",
+                "from": "552100000000@c.us",
+                "self": "in",
+                "star": false,
+                "type": "chat",
+                "invis": false,
+                "links": [],
+                "labels": [],
+                "viewed": false,
+                "isAvatar": false,
+                "isNewMsg": true,
+                "recvFresh": true,
+                "bizBotType": null,
+                "notifyName": "John Doe",
+                "hasReaction": false,
+                "isForwarded": false,
+                "kicNotified": false,
+                "parentMsgId": null,
+                "botPluginType": null,
+                "groupMentions": [],
+                "invokedBotWid": null,
+                "stickerSentTs": 0,
+                "botMsgBodyType": null,
+                "isCarouselCard": false,
+                "isFromTemplate": false,
+                "isMdHistoryMsg": false,
+                "pollInvalidated": false,
+                "latestEditMsgKey": null,
+                "mentionedJidList": [],
+                "botPluginSearchUrl": null,
+                "botResponseTargetId": null,
+                "botPluginMaybeParent": false,
+                "lastPlaybackProgress": 0,
+                "isSentCagPollCreation": false,
+                "isVcardOverMmsDocument": false,
+                "lastUpdateFromServerTs": 0,
+                "botPluginReferenceIndex": null,
+                "botPluginSearchProvider": null,
+                "isDynamicReplyButtonsMsg": false,
+                "requiresDirectConnection": false,
+                "productHeaderImageRejected": false,
+                "latestEditSenderTimestampMs": null,
+                "botReelPluginThumbnailCdnUrl": null
+            },
+            "isGif": false,
+            "links": [],
+            "fromMe": false,
+            "vCards": [],
+            "hasMedia": false,
+            "isStatus": false,
+            "isStarred": false,
+            "timestamp": 1705525141,
+            "deviceType": "ios",
+            "hasReaction": false,
+            "isForwarded": false,
+            "hasQuotedMsg": false,
+            "mentionedIds": [],
+            "forwardingScore": 0
+        }
+    },
+    "event": "message_revoke_everyone",
+    "timestamp": 1705525653494,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+
+  ```
+</Accordion>
+
+## `message_revoke_me`
+
+Event emitted when a message is deleted only for this device
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "message": {
+            "id": {
+                "id": "3EB046AC327B7FA1B433E1",
+                "fromMe": true,
+                "remote": "552100000000@c.us",
+                "_serialized": "true_552100000000@c.us_3EB046AC327B7FA1B433E1"
+            },
+            "to": "552100000000@c.us",
+            "ack": 2,
+            "body": "test",
+            "from": "552100000000@c.us",
+            "type": "chat",
+            "_data": {
+                "t": 1705525142,
+                "id": {
+                    "id": "3EB046AC327B7FA1B433E1",
+                    "fromMe": true,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "true_552100000000@c.us_3EB046AC327B7FA1B433E1"
+                },
+                "to": "552100000000@c.us",
+                "ack": 2,
+                "body": "test",
+                "from": "552100000000@c.us",
+                "self": "in",
+                "star": false,
+                "type": "chat",
+                "invis": false,
+                "links": [],
+                "author": "552100000000@c.us",
+                "labels": [],
+                "viewed": false,
+                "isAvatar": false,
+                "isNewMsg": true,
+                "recvFresh": true,
+                "bizBotType": null,
+                "notifyName": "John Doe",
+                "hasReaction": false,
+                "isForwarded": false,
+                "kicNotified": false,
+                "parentMsgId": null,
+                "botPluginType": null,
+                "groupMentions": [],
+                "invokedBotWid": null,
+                "stickerSentTs": 0,
+                "botMsgBodyType": null,
+                "isCarouselCard": false,
+                "isFromTemplate": false,
+                "isMdHistoryMsg": false,
+                "pollInvalidated": false,
+                "latestEditMsgKey": null,
+                "mentionedJidList": [],
+                "botPluginSearchUrl": null,
+                "botResponseTargetId": null,
+                "botPluginMaybeParent": false,
+                "lastPlaybackProgress": 0,
+                "isSentCagPollCreation": false,
+                "isVcardOverMmsDocument": false,
+                "lastUpdateFromServerTs": 0,
+                "botPluginReferenceIndex": null,
+                "botPluginSearchProvider": null,
+                "isDynamicReplyButtonsMsg": false,
+                "requiresDirectConnection": false,
+                "productHeaderImageRejected": false,
+                "latestEditSenderTimestampMs": null,
+                "botReelPluginThumbnailCdnUrl": null
+            },
+            "isGif": false,
+            "links": [],
+            "author": "552100000000@c.us",
+            "fromMe": true,
+            "vCards": [],
+            "hasMedia": false,
+            "isStatus": false,
+            "isStarred": false,
+            "timestamp": 1705525142,
+            "deviceType": "android",
+            "hasReaction": false,
+            "isForwarded": false,
+            "hasQuotedMsg": false,
+            "mentionedIds": [],
+            "forwardingScore": 0
+        }
+    },
+    "event": "message_revoke_me",
+    "timestamp": 1705525778969,
+    "channel_id": 1
+}
+
+  ```
+</Accordion>
+
+## `message_edit`
+
+Event emitted when a message is edited
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "message": {
+            "id": {
+                "id": "3AA25C814CDA6D384080",
+                "fromMe": false,
+                "remote": "552100000000@c.us",
+                "_serialized": "false_552100000000@c.us_3AA25C814CDA6D384080"
+            },
+            "to": "552100000000@c.us",
+            "body": "Teste edited",
+            "from": "552100000000@c.us",
+            "type": "chat",
+            "_data": {
+                "t": 1705525978,
+                "id": {
+                    "id": "3AA25C814CDA6D384080",
+                    "fromMe": false,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "false_552100000000@c.us_3AA25C814CDA6D384080"
+                },
+                "to": "552100000000@c.us",
+                "body": "Teste edited",
+                "from": "552100000000@c.us",
+                "self": "in",
+                "star": false,
+                "type": "chat",
+                "invis": false,
+                "links": [],
+                "labels": [],
+                "viewed": false,
+                "isAvatar": false,
+                "isNewMsg": true,
+                "recvFresh": true,
+                "bizBotType": null,
+                "notifyName": "John Doe",
+                "hasReaction": false,
+                "isForwarded": false,
+                "kicNotified": false,
+                "parentMsgId": null,
+                "invokedBotWid": null,
+                "stickerSentTs": 0,
+                "botMsgBodyType": null,
+                "isCarouselCard": false,
+                "isFromTemplate": false,
+                "isMdHistoryMsg": false,
+                "pollInvalidated": false,
+                "latestEditMsgKey": {
+                    "id": "3A141128F8BA2436E488",
+                    "fromMe": false,
+                    "remote": "552100000000@c.us",
+                    "_serialized": "false_552100000000@c.us_3A141128F8BA2436E488"
+                },
+                "botResponseTargetId": null,
+                "lastPlaybackProgress": 0,
+                "isSentCagPollCreation": false,
+                "isVcardOverMmsDocument": false,
+                "lastUpdateFromServerTs": 0,
+                "isDynamicReplyButtonsMsg": false,
+                "requiresDirectConnection": false,
+                "productHeaderImageRejected": false,
+                "latestEditSenderTimestampMs": 1705526003118
+            },
+            "isGif": false,
+            "links": [],
+            "fromMe": false,
+            "vCards": [],
+            "hasMedia": false,
+            "isStatus": false,
+            "isStarred": false,
+            "timestamp": 1705525978,
+            "deviceType": "ios",
+            "hasReaction": false,
+            "isForwarded": false,
+            "hasQuotedMsg": false,
+            "mentionedIds": [],
+            "forwardingScore": 0,
+            "latestEditMsgKey": {
+                "id": "3A141128F8BA2436E488",
+                "fromMe": false,
+                "remote": "552100000000@c.us",
+                "_serialized": "false_552100000000@c.us_3A141128F8BA2436E488"
+            },
+            "latestEditSenderTimestampMs": 1705526003118
+        },
+        "newBody": "Teste edited",
+        "previousBody": "Teste"
+    },
+    "event": "message_edit",
+    "timestamp": 1705526003630,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `message_reaction`
+
+Event emitted when a new reaction is received on a message
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "message": {
+            "id": {
+                "id": "3AF0EEB84B5AA3F7BEBA",
+                "fromMe": false,
+                "remote": "552100000000@c.us",
+                "_serialized": "false_552100000000@c.us_3AF0EEB84B5AA3F7BEBA"
+            },
+            "read": false,
+            "msgId": {
+                "id": "3EB0C8653E73D9AE74C29A",
+                "fromMe": true,
+                "remote": "552100000000@c.us",
+                "_serialized": "true_552100000000@c.us_3EB0C8653E73D9AE74C29A"
+            },
+            "orphan": 0,
+            "reaction": "\ud83d\udc4d",
+            "senderId": "552100000000@c.us",
+            "timestamp": 1705526073.378
+        }
+    },
+    "event": "message_reaction",
+    "timestamp": 1705526074079,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `message_ack`
+
+Event emitted when a message acknoledgement status is updated
+
+| Ack | Description |
+| --- | --- |
+| 0 | Pending |
+| 1 | Sent |
+| 2 | Received |
+| 3 | Read |
+| 4 | Played (Only for audios) |
+
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "ack": 2,
+        "message_id": "3EB0C8653E73D9AE74C29A"
+    },
+    "event": "message_ack",
+    "timestamp": 1705525980414,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `group_join`
+
+Event emitted when a new participant joins a group
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "notification": {
+            "id": {
+                "id": "41790999761705526478",
+                "fromMe": false,
+                "remote": "120363221381040187@g.us",
+                "_serialized": "false_120363221381040187@g.us_41790999761705526478_552100000000@c.us",
+                "participant": "552100000000@c.us"
+            },
+            "body": "",
+            "type": "add",
+            "author": "552100000000@c.us",
+            "chatId": "120363221381040187@g.us",
+            "timestamp": 1705526478,
+            "recipientIds": [
+                "552100000000@c.us"
+            ]
+        }
+    },
+    "event": "group_join",
+    "timestamp": 1705526479559,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `group_leave`
+
+Event emitted when a participant leaves a group
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "notification": {
+            "id": {
+                "id": "13150139351705526470",
+                "fromMe": false,
+                "remote": "120363221381040187@g.us",
+                "_serialized": "false_120363221381040187@g.us_13150139351705526470_552100000000@c.us",
+                "participant": "552100000000@c.us"
+            },
+            "body": "",
+            "type": "remove",
+            "author": "552100000000@c.us",
+            "chatId": "120363221381040187@g.us",
+            "timestamp": 1705526470,
+            "recipientIds": [
+                "552100000000@c.us"
+            ]
+        }
+    },
+    "event": "group_leave",
+    "timestamp": 1705526470448,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+
+  ```
+</Accordion>
+
+## `group_update`
+
+Event emitted when a information about a group is updated
+
+| Type | Description |
+| --- | --- |
+| subject | Group name updated |
+| description | Group description updated |
+| picture | Group picture updated (body is either `set` or `remove`) |
+| restrict | Group permissions updated |
+
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "notification": {
+            "id": {
+                "id": "42175998481705526487",
+                "fromMe": false,
+                "remote": "120363221381040187@g.us",
+                "_serialized": "false_120363221381040187@g.us_42175998481705526487"
+            },
+            "body": "",
+            "type": "member_add_mode",
+            "chatId": "120363221381040187@g.us",
+            "timestamp": 1705526487,
+            "recipientIds": []
+        }
+    },
+    "event": "group_update",
+    "timestamp": 1705526487458,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `change_battery`
+
+Event emitted when the battery level changes
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "batteryInfo": {
+            "battery": 50,
+            "plugged": true
+        }
+    },
+    "event": "change_battery",
+    "timestamp": 1705526487458,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `change_state`
+
+Event emitted when connection state changes
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "state": "CONNECTED"
+    },
+    "event": "change_state",
+    "timestamp": 1705526487458,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `chat_removed`
+
+Event emitted when a chat is deleted on the device
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "chat": {
+            "id": "120363221381040187@g.us",
+            "name": "Zapply",
+            "pinned": false,
+            "isGroup": true,
+            "timestamp": 1705526822,
+            "isReadOnly": true,
+            "unreadCount": 0,
+            "muteExpiration": 0
+        }
+    },
+    "event": "chat_removed",
+    "timestamp": 1705527110661,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `chat_archived`
+
+Event emitted when a chat is archived or unarchived on the device
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "chat": {
+            "id": "552100000000@c.us",
+            "name": "Zapply",
+            "pinned": false,
+            "isGroup": false,
+            "archived": true,
+            "timestamp": 1705525979,
+            "isReadOnly": false,
+            "unreadCount": 0,
+            "muteExpiration": 0
+        }
+    },
+    "event": "chat_archived",
+    "timestamp": 1705527148736,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `unread_count`
+
+Event emitted when the unread count changes for a chat
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "chat": {
+            "id": "552100000000@c.us",
+            "name": "John Doe",
+            "pinned": false,
+            "isGroup": false,
+            "archived": false,
+            "timestamp": 1705525979,
+            "isReadOnly": false,
+            "unreadCount": 0,
+            "muteExpiration": 0
+        }
+    },
+    "event": "chat_archived",
+    "timestamp": 1705527198152,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+
+## `loading_screen`
+
+Event emitted when the device is connecting and the loading progress changes
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "percent": 100,
+        "message": "WhatsApp"
+    },
+    "event": "chat_archived",
+    "timestamp": 1705527198152,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8"
+}
+  ```
+</Accordion>
+
+## `call`
+
+Event emitted when a call is received on the device
+
+<Accordion title="Sample Request Body">
+  ```json
+{
+    "data": {
+        "call": {
+            "id": "11845350FE604E3282A367190AE97AD9",
+            "from": "552100000000@c.us",
+            "fromMe": false,
+            "isGroup": false,
+            "isVideo": false,
+            "timestamp": 1705527472,
+            "participants": [],
+            "canHandleLocally": false,
+            "webClientShouldHandle": false
+        }
+    },
+    "event": "call",
+    "timestamp": 1705527472828,
+    "channel_id": "47950b36-bb0d-4f5b-9696-c1ae5b3462a8",
+}
+  ```
+</Accordion>

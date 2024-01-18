@@ -1,33 +1,37 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Understand general concepts, response codes, and authentication strategies.'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Base URL
 
-## Welcome
+Zapply is built on REST principles. We enforce HTTPS in every request to improve data security, integrity, and privacy. The API does not support HTTP.
+To guarantee the best performance we distribute the load across multiple servers, so you should use the base URL designated to your device.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Example of base URL:
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```text
+https://wa01.zapply.cloud
+```
 
 ## Authentication
+To authenticate you need to add an Authorization header with the contents of the header being `Bearer zpp_123456789` where `zpp_123456789` is your API key and the ID of your device in the `x-channel-id` header.
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```text
+Authorization: Bearer zpp_123456789
+x-channel-id: 123456789
 ```
+
+## Response codes
+
+Zapply uses conventional HTTP response codes to indicate the success or failure of an API request. In general, codes in the `2xx` range indicate success, codes in the `4xx` range indicate an error that failed given the information provided (e.g., a required parameter was omitted, a charge failed, etc.), and codes in the `5xx` range indicate an error with Zapply's servers (these are rare).
+
+| Code | Description |
+| :--- | :--- |
+| `200` | OK - Everything worked as expected. |
+| `400` | Bad Request - Often missing a required parameter. |
+| `401` | Unauthorized - No valid API key provided. |
+| `402` | Request Failed - Parameters were valid but request failed. |
+| `404` | Not Found - The requested item doesn't exist. |
+| `429` | Too Many Requests - Too many requests hit the API too quickly. |
+| `5xx` | Server Errors - something went wrong on Zapply's end. |

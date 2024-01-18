@@ -1,0 +1,40 @@
+---
+title: 'Introduction'
+description: 'Use webhooks to notify your application about WhatsApp events'
+---
+
+## What is a webhook?
+
+A webhook is a way for an app to provide other applications with real-time information. A webhook delivers data to other applications as it happens, meaning you get data immediately. Unlike typical APIs where you would need to poll for data very frequently in order to get it real-time. This makes webhooks much more efficient for both provider and consumer.
+You can use webhook feeds to do things like:
+
+- Receive notifications when a new message is received
+- Receive notifications when a message is delivered
+- Receive notifications when a message is read
+- Receive notifications when a message is deleted
+
+## 1. Create a webhook to receive events
+
+<Note>If you don't have a server to handle webhooks, you can use [httpdump.app](https://httpdump.app/) to create a temporary webhook endpoint.</Note>
+
+1. Navigate to **Webhooks** on the sidebar.
+2. Click **New Endpoint**.
+3. Fill in the **URL** field with the URL of your webhook endpoint.
+4. Select the device you want to receive events from.
+5. Select the events you want to receive.
+
+<Frame>
+![title](/images/create-webhook.png)
+</Frame>
+
+## 2. Test that your webhook is working
+
+Make a few interactions with your WhatsApp account to test that your webhook is working. You should see events being sent to your webhook endpoint.
+
+<Frame>
+![title](/images/webhook-info.png)
+</Frame>
+
+## 3. Webhook signature verification
+
+All webhook requests are signed with a secret key. You can use this key to verify that the request is coming from us. The signature is sent in the `Webhook-Signature` header.

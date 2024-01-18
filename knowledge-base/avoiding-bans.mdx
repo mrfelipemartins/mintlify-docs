@@ -1,0 +1,34 @@
+---
+title: 'Avoiding Bans'
+description: 'How to avoid getting banned from WhatsApp'
+---
+
+## Understanding WhatsApp’s Anti-Spam Mechanisms
+WhatsApp employs advanced algorithms to detect and prevent spam. Recognizing these mechanisms is crucial for developers:
+
+* Spam Detection Metrics: WhatsApp analyzes message patterns, frequency, and recipient responses.
+* User Feedback System: Users can mark messages as spam, contributing to WhatsApp's decision-making process for potential blockages.
+
+## Bulk sendings
+
+WhatsApp doesn't allow bulk sendings and our API is not designed for that. If you need to send a message to a large number of users contact us for a dedicated solution.
+
+## Strategies for Compliant Messaging
+To ensure uninterrupted service while using the Zapply API, follow these technical guidelines:
+
+1. SIM Card Maturation Process: Initiate with a period of regular WhatsApp usage before deploying the Zapply API. This includes standard interactions like sending and receiving messages, making calls, and using WhatsApp Web.
+
+2. Engagement and Interaction Validation: Implement algorithms to craft messages that encourage user engagement. Utilize natural language processing (NLP) techniques to create varied and contextually relevant messages.
+
+3. Consent Management Protocols: Develop a system for managing user consent. Implement a two-step process where users first add the company number and then send a consent message (e.g., "I want promotions"). Use this consent as a flag to initiate promotional messaging.
+
+4. Personalization Algorithms: Utilize data analytics to personalize messages. Ensure each message varies in content, using recipient-specific data where possible.
+
+5. Opt-Out Mechanism Implementation: Integrate an easy opt-out mechanism in each message (e.g., “Reply with 2 to unsubscribe”). Monitor webhook responses to update the recipient list dynamically.
+
+6. Profile Completeness Checker: Develop a routine to verify and maintain the completeness and authenticity of the WhatsApp profile associated with the number used in the Zapply API.
+
+7. QR Code Authentication Enhancement: Implement a delayed QR code scanning protocol, ideally 24 hours after the initial WhatsApp registration, to reinforce the authenticity of the number.
+
+## Compliance Reminder
+Adherence to WhatsApp’s terms of service is paramount. This guide should be used in conjunction with WhatsApp's official policy documentation to ensure full compliance.

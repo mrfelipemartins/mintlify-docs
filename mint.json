@@ -5,67 +5,78 @@
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
+  "openapi": "openapi.yaml",
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#eab308",
+    "light": "#fde047",
+    "dark": "#eab308",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#eab308",
+      "to": "#fde047"
     }
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "name": "Sign In",
+      "url": "https://zapply.cloud/login"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "name": "Get Started",
+    "url": "https://zapply.cloud/register"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "API Reference",
+      "icon": "square-terminal",
+      "url": "api-reference"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "Knowledge Base",
+      "icon": "books",
+      "url": "knowledge-base"
     }
   ],
   "navigation": [
     {
       "group": "Get Started",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "introduction"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Quickstart",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        {
+          "group": "PHP",
+          "pages": [
+            "quickstart/php",
+            "quickstart/laravel"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Learn",
+      "pages": [
+        "learn/devices",
+        "learn/api-keys",
+        {
+          "group": "Webhooks",
+          "pages": [
+            "learn/webhooks/introduction",
+            "learn/webhooks/events"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Knowledge Base",
+      "pages": [
+        "knowledge-base/introduction",
+        "knowledge-base/avoiding-bans",
+        "knowledge-base/emulators"
       ]
     },
     {
@@ -75,17 +86,74 @@
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Auth",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/auth/get-qr-code",
+        "api-reference/auth/logout-from-whatsapp",
+        "api-reference/auth/restart-the-device"
+      ]
+    },
+    {
+      "group": "Device",
+      "pages": [
+        "api-reference/device/get-device-info",
+        "api-reference/device/search-messages-in-device",
+        "api-reference/device/set-profile-picture",
+        "api-reference/device/delete-profile-picture",
+        "api-reference/device/set-about-status",
+        "api-reference/device/set-display-name",
+        "api-reference/device/display-offline-status",
+        "api-reference/device/display-online-status",
+        "api-reference/device/get-current-whatsapp-version",
+        "api-reference/device/get-labels",
+        "api-reference/device/validate-number"
+      ]
+    },
+    {
+      "group": "Chats",
+      "pages": [
+        "api-reference/chats/send-message",
+        "api-reference/chats/get-chat",
+        "api-reference/chats/get-chats",
+        "api-reference/chats/clear-chat-messages",
+        "api-reference/chats/clear-chat-state",
+        "api-reference/chats/delete-chat",
+        "api-reference/chats/get-chat-contact",
+        "api-reference/chats/get-chat-labels",
+        "api-reference/chats/get-chat-messages",
+        "api-reference/chats/get-chat-profile-picture",
+        "api-reference/chats/mark-chat-as-read",
+        "api-reference/chats/mark-chat-as-unread",
+        "api-reference/chats/mute-chat",
+        "api-reference/chats/unmute-chat",
+        "api-reference/chats/pin-chat",
+        "api-reference/chats/unpin-chat",
+        "api-reference/chats/send-recording-state",
+        "api-reference/chats/send-typing-state",
+        "api-reference/chats/unarchive-chat",
+        "api-reference/chats/archive-chat"
+      ]
+    },
+    {
+      "group": "Groups",
+      "pages": [
+        "api-reference/groups/accept-group-invite",
+        "api-reference/groups/add-participants-to-group",
+        "api-reference/groups/change-group-description",
+        "api-reference/groups/change-group-name",
+        "api-reference/groups/create-group",
+        "api-reference/groups/delete-group-picture",
+        "api-reference/groups/demote-participants-to-member",
+        "api-reference/groups/get-group-invite-code",
+        "api-reference/groups/get-group-participants",
+        "api-reference/groups/get-groups",
+        "api-reference/groups/leave-group",
+        "api-reference/groups/promote-participants-to-admin",
+        "api-reference/groups/remove-participants-from-group",
+        "api-reference/groups/set-group-picture",
+        "api-reference/groups/set-info-admins-only",
+        "api-reference/groups/set-messages-admins-only"
       ]
     }
-  ],
-  "footerSocials": {
-    "twitter": "https://twitter.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
-  }
+  ]
 }
